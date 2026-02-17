@@ -65,72 +65,69 @@ class SprintGame {
         this.scene.fog = new THREE.Fog(0x87ceeb, 10, 100);
 
         this.camera3D = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-        this.camera3D.position.set(0, 1.6, 5); // Vista desde atrás del ciclista
 
         // Renderer
         try {
+            console.log("🚀 Three.js: Creando WebGLRenderer...");
             this.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-            this.renderer.setSize(window.innerWidth, window.innerHeight);
-            this.renderer.setPixelRatio(window.devicePixelRatio);
+            this.updateRendererSize();
             container.appendChild(this.renderer.domElement);
+            console.log("✅ Three.js: Renderer acoplado al DOM.");
         } catch (err) {
-            console.error("WebGL no disponible:", err);
+            console.error("💥 Three.js: WebGL no disponible:", err);
             return;
         }
 
         // Lights
-        const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
         this.scene.add(ambientLight);
 
         const sunLight = new THREE.DirectionalLight(0xffffff, 1);
         sunLight.position.set(5, 10, 7.5);
         this.scene.add(sunLight);
 
-        // Road
-        const loader = new THREE.TextureLoader();
-        this.roadTexture = loader.load('https://threejs.org/examples/textures/floors/FloorsCheckerboard_S_Diffuse.jpg', undefined, undefined, (err) => {
-            console.warn("Fallo al cargar textura de carretera, usando color sólido.");
-        });
-        this.roadTexture.wrapS = THREE.RepeatWrapping;
-        this.roadTexture.wrapT = THREE.RepeatWrapping;
-        this.roadTexture.repeat.set(1, 50);
+        // Grid para saber que el 3D vive
+        const grid = new THREE.GridHelper(200, 50, 0xff0000, 0x444444);
+        this.scene.add(grid);
 
+        // Road
         const roadGeo = new THREE.PlaneGeometry(20, 2000);
-        const roadMat = new THREE.MeshStandardMaterial({
-            map: this.roadTexture,
-            color: 0x222222 // Gris asfalto
-        });
+        const roadMat = new THREE.MeshBasicMaterial({ color: 0x222222 });
         this.road = new THREE.Mesh(roadGeo, roadMat);
         this.road.rotation.x = -Math.PI / 2;
         this.road.position.z = -500;
         this.scene.add(this.road);
 
-        // Ciclista Simple (Placeholder 3D)
-        this.cyclistGroup = new THREE.Group();
-
-        // Cuerpo/Bici
-        const bikeGeo = new THREE.BoxGeometry(0.4, 0.8, 1.5);
-        const bikeMat = new THREE.MeshStandardMaterial({ color: 0xe30613 }); // Rojo RCN
-        const bike = new THREE.Mesh(bikeGeo, bikeMat);
-        bike.position.y = 0.5;
-        this.cyclistGroup.add(bike);
-
         // Ciclista
-        const riderGeo = new THREE.CylinderGeometry(0.2, 0.2, 1.2);
-        const riderMat = new THREE.MeshStandardMaterial({ color: 0x333333 });
+        this.cyclistGroup = new THREE.Group();
+        const bikeGeo = new THREE.BoxGeometry(0.5, 0.5, 1.2);
+        const bikeMat = new THREE.MeshBasicMaterial({ color: 0xe30613 });
+        this.cyclistGroup.add(new THREE.Mesh(bikeGeo, bikeMat));
+
+        const riderGeo = new THREE.CylinderGeometry(0.2, 0.2, 0.8);
+        const riderMat = new THREE.MeshBasicMaterial({ color: 0x333333 });
         const rider = new THREE.Mesh(riderGeo, riderMat);
-        rider.position.y = 1.2;
+        rider.position.y = 0.6;
         this.cyclistGroup.add(rider);
 
-        this.cyclistGroup.position.set(0, 0, 0);
         this.scene.add(this.cyclistGroup);
 
-        // Posicionar cámara relativa al ciclista
-        this.camera3D.position.set(0, 2.5, 6);
+        // Camera setup
+        this.camera3D.position.set(0, 3, 8);
         this.camera3D.lookAt(0, 1, 0);
 
-        // Start Animation Loop
+        // Animación
         this.animate();
+    }
+
+    updateRendererSize() {
+        const container = this.elements.threeContainer;
+        if (!container || !this.renderer) return;
+        const width = container.clientWidth || window.innerWidth;
+        const height = container.clientHeight || window.innerHeight;
+        this.renderer.setSize(width, height);
+        this.camera3D.aspect = width / height;
+        this.camera3D.updateProjectionMatrix();
     }
 
     animate() {
@@ -299,13 +296,7 @@ class SprintGame {
         });
         this.elements.restartBtn.addEventListener('click', () => this.reset());
 
-        window.addEventListener('resize', () => {
-            if (this.camera3D && this.renderer) {
-                this.camera3D.aspect = window.innerWidth / window.innerHeight;
-                this.camera3D.updateProjectionMatrix();
-                this.renderer.setSize(window.innerWidth, window.innerHeight);
-            }
-        });
+        window.addEventListener('resize', () => this.updateRendererSize());
     }
 
     startCountdown() {

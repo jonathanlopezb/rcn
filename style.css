@@ -39,9 +39,8 @@ html {
 .three-container {
     position: absolute;
     inset: 0;
-    z-index: 0;
-    /* Subirlo para asegurar visibilidad */
-    background: #000;
+    z-index: 1;
+    background: transparent;
 }
 
 /* Vibración de cámara */
