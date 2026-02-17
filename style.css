@@ -302,29 +302,107 @@ html {
 
 .overlay.active {
     display: flex;
+    text-align: center;
+}
+
+.content-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-width: 900px;
+    padding: 40px;
+    animation: fadeInScale 0.8s ease-out;
+}
+
+@keyframes fadeInScale {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.brand-header {
+    margin-bottom: 30px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+}
+
+.rcn-logo-main {
+    width: 180px;
+    filter: drop-shadow(0 0 15px rgba(227, 6, 19, 0.6));
+    animation: pulseLogo 2s infinite alternate;
+}
+
+@keyframes pulseLogo {
+    from {
+        transform: scale(1);
+        filter: drop-shadow(0 0 10px rgba(227, 6, 19, 0.4));
+    }
+
+    to {
+        transform: scale(1.05);
+        filter: drop-shadow(0 0 25px rgba(227, 6, 19, 0.8));
+    }
+}
+
+.transelo-badge {
+    background: var(--rcn-blue);
+    color: white;
+    padding: 5px 20px;
+    font-size: 0.8rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    clip-path: polygon(5% 0, 100% 0, 95% 100%, 0% 100%);
 }
 
 .title {
-    font-size: 5rem;
+    font-size: 6rem;
     font-weight: 900;
-    line-height: 0.9;
-    margin-bottom: 20px;
+    line-height: 0.85;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    background: linear-gradient(to bottom, #fff 50%, #ccc 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 5px 15px rgba(0, 0, 0, 0.5));
 }
 
 .highlight {
+    display: block;
     color: var(--rcn-red);
+    -webkit-text-fill-color: var(--rcn-red);
+}
+
+.subtitle {
+    font-size: 1.5rem;
+    color: var(--rcn-yellow);
+    font-weight: 700;
+    margin-bottom: 40px;
+    text-transform: uppercase;
+    letter-spacing: 3px;
 }
 
 .btn-main {
     background: var(--rcn-red);
     color: #fff;
     border: none;
-    padding: 20px 60px;
-    font-size: 1.5rem;
+    padding: 25px 80px;
+    font-size: 1.8rem;
     font-weight: 900;
     clip-path: polygon(10% 0, 100% 0, 90% 100%, 0% 100%);
     cursor: pointer;
     transition: all 0.3s;
+    box-shadow: 0 10px 30px rgba(227, 6, 19, 0.4);
+    margin-top: 20px;
 }
 
 .btn-main:hover {
@@ -407,19 +485,28 @@ html {
 }
 
 #player-name {
-    background: rgba(255, 255, 255, 0.1);
-    border: 2px solid #333;
-    padding: 10px 20px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 3px solid rgba(255, 255, 255, 0.2);
+    padding: 15px 30px;
     color: white;
-    font-size: 1.2rem;
+    font-size: 1.8rem;
     font-family: var(--font-main);
     text-align: center;
-    width: 250px;
+    width: 500px;
+    font-weight: 900;
+    transition: all 0.3s;
+}
+
+#player-name::placeholder {
+    color: rgba(255, 255, 255, 0.8);
+    opacity: 1;
 }
 
 #player-name:focus {
     border-color: var(--rcn-red);
+    background: rgba(227, 6, 19, 0.1);
     outline: none;
+    width: 550px;
 }
 
 .qr-container {
