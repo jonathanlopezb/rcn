@@ -212,6 +212,11 @@ class SprintGame {
         this.elements.countdownOverlay.classList.remove('active');
         this.elements.roadStrips.style.animationPlayState = 'running';
 
+        // Activar paralaje
+        document.querySelectorAll('.parallax-layer').forEach(layer => {
+            layer.style.animationPlayState = 'running';
+        });
+
         this.playCrowdSound();
         this.increaseCrowdVolume(0.05);
 
@@ -302,9 +307,16 @@ class SprintGame {
             el.classList.toggle('active', name === 'TÚ');
         });
 
-        // Animación carretera
-        const animSpeed = Math.max(0.04, 1 - (this.power / 1200));
+        // Animación carretera y paisajes (Parallax)
+        const animSpeed = Math.max(0.04, 1 - (this.power / 1500));
         this.elements.roadStrips.style.animationDuration = `${animSpeed}s`;
+
+        // Ajustar velocidad de paralaje basado en potencia
+        const pSpeed = Math.max(0.2, (this.power / 1000) + 0.1);
+        const mountains = document.querySelector('.layer-mountains');
+        const trees = document.querySelector('.layer-trees');
+        if (mountains) mountains.style.animationDuration = `${60 / pSpeed}s`;
+        if (trees) trees.style.animationDuration = `${30 / pSpeed}s`;
     }
 
     async generateQR() {
@@ -331,6 +343,12 @@ class SprintGame {
         this.gameState = 'FINISHED';
         clearInterval(this.timerInterval);
         this.elements.roadStrips.style.animationPlayState = 'paused';
+
+        // Detener paralaje
+        document.querySelectorAll('.parallax-layer').forEach(layer => {
+            layer.style.animationPlayState = 'paused';
+        });
+
         this.increaseCrowdVolume(0.01);
         setTimeout(() => this.stopCrowdSound(), 2000);
 
