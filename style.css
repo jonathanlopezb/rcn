@@ -203,6 +203,30 @@ html {
     z-index: 10;
 }
 
+.header-center {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+}
+
+.btn-withdraw {
+    background: rgba(227, 6, 19, 0.2);
+    border: 1px solid var(--rcn-red);
+    color: #fff;
+    padding: 5px 15px;
+    font-size: 0.7rem;
+    font-weight: 900;
+    cursor: pointer;
+    clip-path: polygon(5% 0, 100% 0, 95% 100%, 0% 100%);
+    transition: all 0.3s;
+    text-transform: uppercase;
+}
+
+.btn-withdraw:hover {
+    background: var(--rcn-red);
+    transform: scale(1.05);
+}
+
 .power-section {
     width: 60%;
     margin: 0 auto;

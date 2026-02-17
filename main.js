@@ -316,6 +316,14 @@ class SprintGame {
         });
         this.elements.restartBtn.addEventListener('click', () => this.reset());
 
+        const withdrawBtn = document.getElementById('withdraw-btn');
+        if (withdrawBtn) {
+            withdrawBtn.addEventListener('click', () => {
+                this.speak("¡Te has retirado de la carrera!", true);
+                this.reset();
+            });
+        }
+
         window.addEventListener('resize', () => this.updateRendererSize());
     }
 
