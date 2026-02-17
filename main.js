@@ -133,30 +133,50 @@ class SprintGame {
     animate() {
         requestAnimationFrame(() => this.animate());
 
+        const delta = this.clock.getDelta();
+        const powerFactor = this.power / 1500;
+        const speed = (this.power / 5) + 5;
+
         if (this.gameState === 'SPRINTING') {
-            const delta = this.clock.getDelta();
-            const speed = (this.power / 100) + 0.5;
-
-            // Move road texture
-            this.roadTexture.offset.y += speed * delta;
-
-            // Animación suave de balanceo del ciclista
-            this.cyclistGroup.rotation.z = Math.sin(Date.now() * 0.005) * (this.power / 5000);
-            this.cyclistGroup.position.y = Math.sin(Date.now() * 0.01) * 0.02;
-
-            // Camera shake on high power
-            if (this.power > 800) {
-                this.camera3D.position.x = (Math.random() - 0.5) * (this.power / 20000);
-                this.camera3D.position.y = 2.5 + (Math.random() - 0.5) * (this.power / 20000);
-            } else {
-                this.camera3D.position.x = 0;
-                this.camera3D.position.y = 2.5;
+            // Mover carretera
+            if (this.road.material.map) {
+                this.road.material.map.offset.y += powerFactor * delta * 5;
             }
 
-            this.camera3D.lookAt(0, 1, -5); // Mirar hacia adelante
+            // Mover montañas (Parallax)
+            this.mountains.children.forEach(m => {
+                m.position.z += speed * delta;
+                if (m.position.z > 100) m.position.z = -2000;
+            });
+
+            // Mover NPCs
+            this.npcMeshes.forEach((npc, i) => {
+                const npcPower = this.npcPowers[i];
+                const relativeSpeed = (this.power - npcPower) / 50;
+                npc.position.z += relativeSpeed * delta;
+                npc.position.x += Math.sin(Date.now() * 0.002 + i) * 0.02;
+            });
+
+            // Animación Jugador
+            this.cyclistGroup.rotation.z = Math.sin(Date.now() * 0.01) * 0.05 * powerFactor;
+            this.cyclistGroup.position.y = Math.abs(Math.sin(Date.now() * 0.01)) * 0.05;
+
+            // Cámara Cinematográfica
+            const targetZ = 12 - (powerFactor * 5);
+            const targetY = 3 + (powerFactor * 1.5);
+            this.camera3D.position.z += (targetZ - this.camera3D.position.z) * 0.1;
+            this.camera3D.position.y += (targetY - this.camera3D.position.y) * 0.1;
+
+            if (this.power > 900) {
+                this.camera3D.position.x = (Math.random() - 0.5) * 0.2;
+            } else {
+                this.camera3D.position.x = 0;
+            }
+
+            this.camera3D.lookAt(0, 1, -10);
         }
 
-        this.renderer.render(this.scene, this.camera3D);
+        if (this.renderer) this.renderer.render(this.scene, this.camera3D);
     }
 
     initPose() {
