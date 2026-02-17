@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Desafío Último Kilómetro | Transelo Eventos</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;900&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <div id="app" class="game-container">
+        <!-- Escenario -->
+        <div class="sky-background"></div>
+        <div class="road-container">
+            <div class="road">
+                <div class="road-strips"></div>
+            </div>
+        </div>
+
+        <div id="peloton" class="peloton-layer">
+            <div class="cyclist player" id="player-cyclist">
+                <div class="bike-body"></div>
+                <div class="rider-label">TÚ</div>
+            </div>
+            <div class="cyclist npc npc-1"></div>
+            <div class="cyclist npc npc-2"></div>
+        </div>
+
+        <!-- HUD Superior -->
+        <header class="hud-top">
+            <div class="top-row">
+                <div class="logo-transelo">Desarrollado por <span>Transelo Eventos</span></div>
+                <div class="broadcast-badge">RCN DEPORTES - EN VIVO</div>
+            </div>
+            <div class="stats-group">
+                <div class="hud-card">
+                    <span class="hud-label">TIEMPO</span>
+                    <span id="timer" class="hud-value">00:00:00</span>
+                </div>
+                <div class="hud-card">
+                    <span class="hud-label">DISTANCIA</span>
+                    <span id="distance" class="hud-value">1000m</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Rankings -->
+        <aside class="hud-rankings">
+            <div class="rank-item active" id="rank-1">1º <span class="name">TÚ</span></div>
+            <div class="rank-item" id="rank-2">2º <span class="name">NPC 1</span></div>
+            <div class="rank-item" id="rank-3">3º <span class="name">NPC 2</span></div>
+        </aside>
+
+        <!-- HUD Inferior -->
+        <footer class="hud-bottom">
+            <div class="power-section">
+                <div class="power-bar-header">
+                    <span class="power-badge">SPRINT POWER</span>
+                    <span id="power-text" class="power-reading">0W</span>
+                </div>
+                <div class="power-bar-wrapper">
+                    <div id="power-fill" class="power-bar-fill"></div>
+                </div>
+            </div>
+        </footer>
+
+        <!-- Overlays -->
+        <section id="start-overlay" class="overlay active">
+            <div class="content-box">
+                <h1 class="title">DESAFÍO <span class="highlight">ÚLTIMO KILÓMETRO</span></h1>
+                <p class="subtitle">Siente la gloria del sprint final</p>
+                <div class="player-input">
+                    <input type="text" id="player-name" placeholder="Tu nombre" value="Jonathan">
+                </div>
+                <button id="start-btn" class="btn-main">COMENZAR SPRINT</button>
+            </div>
+        </section>
+
+        <section id="countdown-overlay" class="overlay">
+            <div id="countdown-text" class="countdown-display">3</div>
+        </section>
+
+        <section id="result-overlay" class="overlay">
+            <div class="result-card">
+                <div class="result-header">ETAPA FINALIZADA</div>
+                <h2 id="final-rank-text">¡1º POSICIÓN!</h2>
+                <div class="result-stats">
+                    <div class="res-item">
+                        <span class="res-label">TIEMPO FINAL</span>
+                        <span id="res-time" class="res-value">--:--:--</span>
+                    </div>
+                    <div class="res-item">
+                        <span class="res-label">POTENCIA MÁX</span>
+                        <span id="res-power" class="res-value">0W</span>
+                    </div>
+                </div>
+                <!-- QR Code Container -->
+                <div id="qr-container" class="qr-container">
+                    <p>Escanea tu resultado:</p>
+                    <div id="qrcode"></div>
+                </div>
+                <div class="result-actions">
+                    <button id="download-btn" class="btn-secondary">DESCARGAR RESULTADO</button>
+                    <button id="restart-btn" class="btn-outline">REINTENTAR</button>
+                </div>
+                <div class="footer-brand">Powered by Transelo Eventos</div>
+            </div>
+        </section>
+
+        <div id="finish-line" class="finish-line"></div>
+
+        <!-- MediaPipe Camera Preview -->
+        <div class="camera-preview-container">
+            <video id="input-video" class="input-video"></video>
+            <canvas id="output-canvas" class="output-canvas"></canvas>
+            <div class="camera-status">Detección de Movimiento Activa</div>
+        </div>
+    </div>
+    <script type="module" src="/main.js"></script>
+</body>
+
+</html>

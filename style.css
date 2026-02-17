@@ -1,0 +1,505 @@
+:root {
+    --rcn-red: #E30613;
+    --rcn-blue: #0033A0;
+    --rcn-yellow: #FFD700;
+    --rcn-dark: #111111;
+    --rcn-white: #FFFFFF;
+    --broadcast-bg: rgba(10, 10, 10, 0.85);
+    --font-main: 'Outfit', sans-serif;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    cursor: default;
+}
+
+body,
+html {
+    width: 100%;
+    height: 100%;
+    background: #000;
+    font-family: var(--font-main);
+    color: var(--rcn-white);
+    overflow: hidden;
+    user-select: none;
+}
+
+.game-container {
+    width: 100vw;
+    height: 100vh;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+/* --- FONDO ANIMADO --- */
+.sky-background {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, #1a4a9c 0%, #3498db 40%, #87ceeb 60%);
+    z-index: -2;
+}
+
+.road-container {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 60%;
+    perspective: 800px;
+    z-index: -1;
+    overflow: hidden;
+}
+
+.road {
+    position: absolute;
+    bottom: -50%;
+    left: 50%;
+    width: 200%;
+    height: 200%;
+    background: #333;
+    transform: translateX(-50%) rotateX(60deg);
+    transform-origin: center bottom;
+    border-left: 20px solid #555;
+    border-right: 20px solid #555;
+    box-shadow: 0 0 100px rgba(0, 0, 0, 0.5);
+}
+
+.road-strips {
+    position: absolute;
+    width: 30px;
+    height: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: repeating-linear-gradient(to top,
+            #FFFFFF 0,
+            #FFFFFF 80px,
+            transparent 80px,
+            transparent 160px);
+    animation: roadMove 2s linear infinite;
+    animation-play-state: paused;
+}
+
+@keyframes roadMove {
+    from {
+        background-position: 0 0;
+    }
+
+    to {
+        background-position: 0 160px;
+    }
+}
+
+/* --- HUD TOP --- */
+.hud-top {
+    padding: 20px 40px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    align-items: center;
+    z-index: 10;
+}
+
+.top-row {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    align-items: center;
+}
+
+.logo-transelo {
+    font-size: 0.65rem;
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.4);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.logo-transelo span {
+    color: var(--rcn-white);
+    opacity: 0.8;
+}
+
+.broadcast-badge {
+    background: var(--rcn-red);
+    padding: 5px 15px;
+    font-weight: 900;
+    font-style: italic;
+    font-size: 0.8rem;
+    letter-spacing: 1px;
+    clip-path: polygon(10% 0, 100% 0, 90% 100%, 0% 100%);
+    box-shadow: 0 4px 15px rgba(227, 6, 19, 0.4);
+}
+
+.stats-group {
+    display: flex;
+    gap: 20px;
+}
+
+.hud-card {
+    background: var(--broadcast-bg);
+    padding: 10px 25px;
+    border-top: 3px solid var(--rcn-red);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 150px;
+    backdrop-filter: blur(10px);
+}
+
+.hud-label {
+    color: #888;
+    font-size: 0.65rem;
+    font-weight: 700;
+}
+
+.hud-value {
+    font-size: 1.8rem;
+    font-weight: 900;
+    color: #fff;
+}
+
+/* --- HUD RANKINGS --- */
+.hud-rankings {
+    position: absolute;
+    left: 40px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    z-index: 10;
+}
+
+.rank-item {
+    background: var(--broadcast-bg);
+    padding: 10px 20px;
+    font-weight: 900;
+    font-style: italic;
+    border-left: 5px solid transparent;
+    transition: all 0.3s;
+    font-size: 1.2rem;
+    color: #888;
+}
+
+.rank-item.active {
+    border-left-color: var(--rcn-red);
+    background: rgba(227, 6, 19, 0.2);
+    color: #fff;
+    transform: scale(1.1);
+}
+
+/* --- HUD BOTTOM --- */
+.hud-bottom {
+    padding: 40px;
+    z-index: 10;
+}
+
+.power-section {
+    width: 60%;
+    margin: 0 auto;
+}
+
+.power-bar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 8px;
+}
+
+.power-badge {
+    font-weight: 900;
+    color: var(--rcn-yellow);
+    font-size: 0.9rem;
+}
+
+.power-reading {
+    font-size: 2.5rem;
+    font-weight: 900;
+    line-height: 1;
+}
+
+.power-bar-wrapper {
+    height: 15px;
+    background: rgba(255, 255, 255, 0.1);
+    position: relative;
+}
+
+.power-bar-fill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, var(--rcn-red), var(--rcn-yellow));
+    transition: width 0.1s ease-out;
+    box-shadow: 0 0 20px rgba(227, 6, 19, 0.5);
+}
+
+.power-markers {
+    position: absolute;
+    top: 100%;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.6rem;
+    margin-top: 5px;
+    color: #666;
+}
+
+/* --- PELOTON --- */
+.peloton-layer {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: 5;
+    pointer-events: none;
+}
+
+.cyclist {
+    position: absolute;
+    bottom: 20%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 80px;
+}
+
+.cyclist.player {
+    transform: translateX(-50%) scale(1.5);
+    z-index: 10;
+}
+
+.bike-body {
+    width: 100%;
+    height: 100%;
+    background: url('https://cdn-icons-png.flaticon.com/512/3133/3133606.png') no-repeat center;
+    background-size: contain;
+    filter: drop-shadow(0 10px 10px rgba(0, 0, 0, 0.5));
+    animation: bounce 0.4s infinite alternate;
+}
+
+@keyframes bounce {
+    from {
+        transform: translateY(0);
+    }
+
+    to {
+        transform: translateY(-5px);
+    }
+}
+
+/* --- OVERLAYS --- */
+.overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.9);
+    z-index: 100;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    backdrop-filter: blur(15px);
+}
+
+.overlay.active {
+    display: flex;
+}
+
+.title {
+    font-size: 5rem;
+    font-weight: 900;
+    line-height: 0.9;
+    margin-bottom: 20px;
+}
+
+.highlight {
+    color: var(--rcn-red);
+}
+
+.btn-main {
+    background: var(--rcn-red);
+    color: #fff;
+    border: none;
+    padding: 20px 60px;
+    font-size: 1.5rem;
+    font-weight: 900;
+    clip-path: polygon(10% 0, 100% 0, 90% 100%, 0% 100%);
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.btn-main:hover {
+    background: #fff;
+    color: var(--rcn-red);
+    transform: scale(1.1);
+}
+
+.countdown-display {
+    font-size: 20rem;
+    font-weight: 900;
+    color: var(--rcn-red);
+}
+
+/* --- RESULTS --- */
+.result-card {
+    background: var(--rcn-dark);
+    padding: 60px;
+    border: 5px solid var(--rcn-red);
+    text-align: center;
+    max-width: 600px;
+}
+
+.result-header {
+    font-weight: 900;
+    color: #666;
+    letter-spacing: 2px;
+}
+
+.result-stats {
+    display: flex;
+    gap: 40px;
+    margin: 40px 0;
+    justify-content: center;
+}
+
+.res-item {
+    display: flex;
+    flex-direction: column;
+}
+
+.res-label {
+    font-size: 0.8rem;
+    color: #888;
+    font-weight: 700;
+}
+
+.res-value {
+    font-size: 2.5rem;
+    font-weight: 900;
+    color: var(--rcn-yellow);
+}
+
+.result-actions {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+}
+
+.btn-secondary {
+    background: #333;
+    color: #fff;
+    border: none;
+    padding: 15px 30px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.btn-outline {
+    background: transparent;
+    color: #fff;
+    border: 2px solid #555;
+    padding: 15px 30px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.player-input {
+    margin-bottom: 25px;
+}
+
+#player-name {
+    background: rgba(255, 255, 255, 0.1);
+    border: 2px solid #333;
+    padding: 10px 20px;
+    color: white;
+    font-size: 1.2rem;
+    font-family: var(--font-main);
+    text-align: center;
+    width: 250px;
+}
+
+#player-name:focus {
+    border-color: var(--rcn-red);
+    outline: none;
+}
+
+.qr-container {
+    margin: 20px 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.qr-container p {
+    font-size: 0.8rem;
+    color: #888;
+    font-weight: 700;
+}
+
+#qrcode img {
+    border: 4px solid #fff;
+}
+
+.footer-brand {
+    margin-top: 30px;
+    font-size: 0.7rem;
+    color: #444;
+    font-weight: 700;
+}
+
+/* --- MEDIAPIPE CAMERA --- */
+.camera-preview-container {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    width: 240px;
+    height: 180px;
+    background: #000;
+    border: 3px solid var(--rcn-red);
+    box-shadow: 0 0 20px rgba(227, 6, 19, 0.4);
+    z-index: 50;
+    overflow: hidden;
+    border-radius: 10px;
+}
+
+.input-video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transform: scaleX(-1);
+    opacity: 0.3;
+}
+
+.output-canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    transform: scaleX(-1);
+}
+
+.camera-status {
+    position: absolute;
+    top: 0;
+    width: 100%;
+    background: var(--rcn-red);
+    color: white;
+    font-size: 0.6rem;
+    font-weight: 900;
+    text-align: center;
+    padding: 2px 0;
+}
+
+/* --- FINISH LINE --- */
+.finish-line {
+    position: absolute;
+    top: -100px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 1000px;
+    height: 100px;
+    background: repeating-linear-gradient(90deg, #fff 0, #fff 50px, #000 50px, #000 100px);
+    z-index: 4;
+    display: none;
+}
