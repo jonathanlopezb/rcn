@@ -88,20 +88,46 @@ class SprintGame {
 
         // Road
         const loader = new THREE.TextureLoader();
-        this.roadTexture = loader.load('https://threejs.org/examples/textures/floors/FloorsCheckerboard_S_Diffuse.jpg'); // Placeholder realista
+        this.roadTexture = loader.load('https://threejs.org/examples/textures/floors/FloorsCheckerboard_S_Diffuse.jpg', undefined, undefined, (err) => {
+            console.warn("Fallo al cargar textura de carretera, usando color sólido.");
+        });
         this.roadTexture.wrapS = THREE.RepeatWrapping;
         this.roadTexture.wrapT = THREE.RepeatWrapping;
-        this.roadTexture.repeat.set(1, 10);
+        this.roadTexture.repeat.set(1, 50);
 
-        const roadGeo = new THREE.PlaneGeometry(10, 1000);
+        const roadGeo = new THREE.PlaneGeometry(20, 2000);
         const roadMat = new THREE.MeshStandardMaterial({
             map: this.roadTexture,
-            color: 0x333333
+            color: 0x222222 // Gris asfalto
         });
         this.road = new THREE.Mesh(roadGeo, roadMat);
         this.road.rotation.x = -Math.PI / 2;
-        this.road.position.z = -450;
+        this.road.position.z = -500;
         this.scene.add(this.road);
+
+        // Ciclista Simple (Placeholder 3D)
+        this.cyclistGroup = new THREE.Group();
+
+        // Cuerpo/Bici
+        const bikeGeo = new THREE.BoxGeometry(0.4, 0.8, 1.5);
+        const bikeMat = new THREE.MeshStandardMaterial({ color: 0xe30613 }); // Rojo RCN
+        const bike = new THREE.Mesh(bikeGeo, bikeMat);
+        bike.position.y = 0.5;
+        this.cyclistGroup.add(bike);
+
+        // Ciclista
+        const riderGeo = new THREE.CylinderGeometry(0.2, 0.2, 1.2);
+        const riderMat = new THREE.MeshStandardMaterial({ color: 0x333333 });
+        const rider = new THREE.Mesh(riderGeo, riderMat);
+        rider.position.y = 1.2;
+        this.cyclistGroup.add(rider);
+
+        this.cyclistGroup.position.set(0, 0, 0);
+        this.scene.add(this.cyclistGroup);
+
+        // Posicionar cámara relativa al ciclista
+        this.camera3D.position.set(0, 2.5, 6);
+        this.camera3D.lookAt(0, 1, 0);
 
         // Start Animation Loop
         this.animate();
@@ -117,14 +143,20 @@ class SprintGame {
             // Move road texture
             this.roadTexture.offset.y += speed * delta;
 
+            // Animación suave de balanceo del ciclista
+            this.cyclistGroup.rotation.z = Math.sin(Date.now() * 0.005) * (this.power / 5000);
+            this.cyclistGroup.position.y = Math.sin(Date.now() * 0.01) * 0.02;
+
             // Camera shake on high power
             if (this.power > 800) {
-                this.camera3D.position.x = (Math.random() - 0.5) * 0.05;
-                this.camera3D.position.y = 1.6 + (Math.random() - 0.5) * 0.05;
+                this.camera3D.position.x = (Math.random() - 0.5) * (this.power / 20000);
+                this.camera3D.position.y = 2.5 + (Math.random() - 0.5) * (this.power / 20000);
             } else {
                 this.camera3D.position.x = 0;
-                this.camera3D.position.y = 1.6;
+                this.camera3D.position.y = 2.5;
             }
+
+            this.camera3D.lookAt(0, 1, -5); // Mirar hacia adelante
         }
 
         this.renderer.render(this.scene, this.camera3D);
