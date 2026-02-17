@@ -160,7 +160,9 @@ class SprintGame {
             resTime: document.getElementById('res-time'),
             resPower: document.getElementById('res-power'),
             video: document.getElementById('input-video'),
-            canvas: document.getElementById('output-canvas')
+            canvas: document.getElementById('output-canvas'),
+            app: document.getElementById('app'),
+            speedLines: document.getElementById('speed-lines')
         };
         this.ctx = this.elements.canvas.getContext('2d');
     }
@@ -310,6 +312,15 @@ class SprintGame {
         // Animación carretera y paisajes (Parallax)
         const animSpeed = Math.max(0.04, 1 - (this.power / 1500));
         this.elements.roadStrips.style.animationDuration = `${animSpeed}s`;
+
+        // Efectos de velocidad
+        if (this.power > 800) {
+            this.elements.app.classList.add('shake');
+            this.elements.speedLines.style.opacity = (this.power - 800) / 700;
+        } else {
+            this.elements.app.classList.remove('shake');
+            this.elements.speedLines.style.opacity = 0;
+        }
 
         // Ajustar velocidad de paralaje basado en potencia
         const pSpeed = Math.max(0.2, (this.power / 1000) + 0.1);
