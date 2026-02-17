@@ -435,10 +435,10 @@ html {
 }
 
 .title {
-    font-size: 6rem;
+    font-size: clamp(2.5rem, 8vw, 4.5rem);
     font-weight: 900;
     line-height: 0.85;
-    margin-bottom: 10px;
+    margin-bottom: 5px;
     text-transform: uppercase;
     background: linear-gradient(to bottom, #fff 50%, #ccc 100%);
     -webkit-background-clip: text;
@@ -454,26 +454,26 @@ html {
 }
 
 .subtitle {
-    font-size: 1.5rem;
+    font-size: clamp(0.9rem, 2.5vw, 1.2rem);
     color: var(--rcn-yellow);
     font-weight: 700;
-    margin-bottom: 40px;
+    margin-bottom: 30px;
     text-transform: uppercase;
-    letter-spacing: 3px;
+    letter-spacing: 2px;
 }
 
 .btn-main {
     background: var(--rcn-red);
     color: #fff;
     border: none;
-    padding: 25px 80px;
-    font-size: 1.8rem;
+    padding: 18px 60px;
+    font-size: clamp(1.2rem, 3vw, 1.5rem);
     font-weight: 900;
     clip-path: polygon(10% 0, 100% 0, 90% 100%, 0% 100%);
     cursor: pointer;
     transition: all 0.3s;
     box-shadow: 0 10px 30px rgba(227, 6, 19, 0.4);
-    margin-top: 20px;
+    margin-top: 15px;
 }
 
 .btn-main:hover {
@@ -558,12 +558,13 @@ html {
 #player-name {
     background: rgba(255, 255, 255, 0.05);
     border: 3px solid rgba(255, 255, 255, 0.2);
-    padding: 15px 30px;
+    padding: 12px 20px;
     color: white;
-    font-size: 1.8rem;
+    font-size: clamp(1.2rem, 2.5vw, 1.6rem);
     font-family: var(--font-main);
     text-align: center;
-    width: 500px;
+    width: 100%;
+    max-width: 450px;
     font-weight: 900;
     transition: all 0.3s;
 }
@@ -577,7 +578,7 @@ html {
     border-color: var(--rcn-red);
     background: rgba(227, 6, 19, 0.1);
     outline: none;
-    width: 550px;
+    max-width: 500px;
 }
 
 .qr-container {
