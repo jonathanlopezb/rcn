@@ -263,9 +263,6 @@ class SprintGame {
 
         this.elements.startBtn.addEventListener('click', () => {
             console.log("Click en Comenzar detectado");
-            if (document.documentElement.requestFullscreen) {
-                document.documentElement.requestFullscreen().catch(e => console.warn("Fullscreen denegado:", e));
-            }
             this.startCountdown();
         });
         this.elements.restartBtn.addEventListener('click', () => this.reset());
