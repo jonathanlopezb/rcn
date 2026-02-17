@@ -36,11 +36,13 @@ class SprintGame {
         this.clock = new THREE.Clock();
 
         this.initDOM();
-        this.initThree();
-        this.initEvents();
-        this.initAudio();
-        this.initNarrator();
-        this.initPose();
+        try {
+            this.initThree();
+            this.initEvents();
+            this.initNarrator();
+        } catch (e) {
+            console.error("Error durante la inicialización:", e);
+        }
     }
 
     initThree() {
@@ -256,7 +258,14 @@ class SprintGame {
 
     startCountdown() {
         this.gameState = 'COUNTDOWN';
-        this.playerName = document.getElementById('player-name').value || "Ciclista";
+
+        // Inicializar Audio y Pose solo después de interacción del usuario
+        if (!this.audioCtx) this.initAudio();
+        if (!this.pose) this.initPose();
+
+        const nameInput = document.getElementById('player-name');
+        this.playerName = nameInput ? nameInput.value : "Ciclista";
+
         this.elements.startOverlay.classList.remove('active');
         this.elements.countdownOverlay.classList.add('active');
 
