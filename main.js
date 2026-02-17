@@ -1,10 +1,14 @@
 console.log("🚀 main.js: Iniciando carga de módulos...");
 
 import * as THREE from 'three';
-import { Pose } from '@mediapipe/pose';
-import { Camera } from '@mediapipe/camera_utils';
+import mpPose from '@mediapipe/pose';
+import mpCamera from '@mediapipe/camera_utils';
 import QRCode from 'qrcode';
 import gsap from 'gsap';
+
+// Solución para compatibilidad de constructores en Vite/NPM
+const Pose = mpPose.Pose || window.Pose;
+const Camera = mpCamera.Camera || window.Camera;
 
 console.log("✅ main.js: Módulos cargados correctamente.");
 
