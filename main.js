@@ -1,7 +1,4 @@
-/**
- * Desafío Último Kilómetro
- * FASE 7: Motor 3D Professional (Three.js)
- */
+console.log("🚀 main.js: Iniciando carga de módulos...");
 
 import * as THREE from 'three';
 import { Pose } from '@mediapipe/pose';
@@ -9,8 +6,11 @@ import { Camera } from '@mediapipe/camera_utils';
 import QRCode from 'qrcode';
 import gsap from 'gsap';
 
+console.log("✅ main.js: Módulos cargados correctamente.");
+
 class SprintGame {
     constructor() {
+        console.log("🏗️ SprintGame: Instanciando clase...");
         this.gameState = 'IDLE';
         this.distance = 1000;
         this.time = 0;
@@ -36,17 +36,24 @@ class SprintGame {
         this.clock = new THREE.Clock();
 
         this.initDOM();
+        this.initEvents(); // PRIMERO: Los eventos tienen que estar listos ya mismo.
+
         try {
+            console.log("🎨 Three.js: Inicializando escena...");
             this.initThree();
-            this.initEvents();
+            console.log("🎙️ Narrador: Inicializando voces...");
             this.initNarrator();
         } catch (e) {
-            console.error("Error durante la inicialización:", e);
+            console.error("⚠️ Error en componentes visuales/audio:", e);
         }
     }
 
     initThree() {
         const container = this.elements.threeContainer;
+        if (!container) {
+            console.warn("Contenedor 3D no encontrado.");
+            return;
+        }
 
         // Scene & Camera
         this.scene = new THREE.Scene();
@@ -57,10 +64,15 @@ class SprintGame {
         this.camera3D.position.set(0, 1.6, 5); // Vista desde atrás del ciclista
 
         // Renderer
-        this.renderer = new THREE.WebGLRenderer({ antialias: true });
-        this.renderer.setSize(window.innerWidth, window.innerHeight);
-        this.renderer.setPixelRatio(window.devicePixelRatio);
-        container.appendChild(this.renderer.domElement);
+        try {
+            this.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+            this.renderer.setSize(window.innerWidth, window.innerHeight);
+            this.renderer.setPixelRatio(window.devicePixelRatio);
+            container.appendChild(this.renderer.domElement);
+        } catch (err) {
+            console.error("WebGL no disponible:", err);
+            return;
+        }
 
         // Lights
         const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
@@ -239,9 +251,16 @@ class SprintGame {
     }
 
     initEvents() {
+        console.log("Inicializando eventos...");
+        if (!this.elements.startBtn) {
+            console.error("BOTÓN DE INICIO NO ENCONTRADO EN EL DOM");
+            return;
+        }
+
         this.elements.startBtn.addEventListener('click', () => {
+            console.log("Click en Comenzar detectado");
             if (document.documentElement.requestFullscreen) {
-                document.documentElement.requestFullscreen();
+                document.documentElement.requestFullscreen().catch(e => console.warn("Fullscreen denegado:", e));
             }
             this.startCountdown();
         });
@@ -387,6 +406,11 @@ class SprintGame {
     }
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-    new SprintGame();
-});
+try {
+    console.log("🏁 main.js: Intentando arrancar el juego...");
+    const game = new SprintGame();
+    window.game = game; // Para debug desde consola
+} catch (err) {
+    console.error("💥 ERROR CRÍTICO AL ARRANCAR EL JUEGO:", err);
+    alert("Hubo un error cargando el juego. Por favor, mira la consola (F12) para más detalles.");
+}

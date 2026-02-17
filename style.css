@@ -308,11 +308,14 @@ html {
     position: absolute;
     inset: 0;
     background: rgba(0, 0, 0, 0.9);
-    z-index: 100;
+    z-index: 1000;
+    /* Asegurar que esté arriba */
     display: none;
     justify-content: center;
     align-items: center;
     backdrop-filter: blur(15px);
+    pointer-events: auto;
+    /* IMPORTANTE: Asegurar que reciba clics */
 }
 
 .overlay.active {
