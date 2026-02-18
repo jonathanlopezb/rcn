@@ -234,6 +234,27 @@ html {
     text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
 }
 
+.detection-status {
+    padding: 5px 15px;
+    font-weight: 900;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    border-radius: 4px;
+    transition: all 0.3s;
+    letter-spacing: 1px;
+}
+
+.detection-status.inactive {
+    background: rgba(255, 255, 255, 0.1);
+    color: #666;
+}
+
+.detection-status.active {
+    background: #00ff00;
+    color: #000;
+    box-shadow: 0 0 15px rgba(0, 255, 0, 0.5);
+}
+
 /* --- HUD RANKINGS --- */
 .hud-rankings {
     position: absolute;

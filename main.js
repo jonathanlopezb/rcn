@@ -39,6 +39,15 @@ class SprintGame {
         this.roadTexture = null;
         this.clock = new THREE.Clock();
 
+        // Biomecánica & Detección avanzada
+        this.angleBuffer = [];
+        this.pedalCount = 0;
+        this.pedalState = 'UP'; // UP o DOWN
+        this.lastPedalTime = 0;
+        this.rpm = 0;
+        this.inertia = 0;
+        this.resistance = 0.05; // Coeficiente de resistencia al aire
+
         this.initDOM();
         this.initEvents(); // PRIMERO: Los eventos tienen que estar listos ya mismo.
 
@@ -289,16 +298,66 @@ class SprintGame {
 
         const currentY = (wristR.y + wristL.y) / 2;
 
-        if (this.lastWristY !== null && this.gameState === 'SPRINTING') {
-            const diff = Math.abs(currentY - this.lastWristY);
-            if (diff > this.movementThreshold) {
-                this.power += diff * 900;
-                if (this.power > 1500) this.power = 1500;
-            }
+        // --- SISTEMA PRECISIÓN BIOMECÁNICA ---
+        const hip = results.poseLandmarks[24]; // Cadera derecha
+        const knee = results.poseLandmarks[26]; // Rodilla derecha
+        const ankle = results.poseLandmarks[28]; // Tobillo derecho
+
+        if (hip && knee && ankle) {
+            const angle = this.calculateAngle(hip, knee, ankle);
+            this.processAngle(angle);
         }
 
         this.lastWristY = currentY;
         this.ctx.restore();
+    }
+
+    calculateAngle(a, b, c) {
+        // b es el vértice (rodilla)
+        const radians = Math.atan2(c.y - b.y, c.x - b.x) - Math.atan2(a.y - b.y, a.x - b.x);
+        let angle = Math.abs(radians * 180.0 / Math.PI);
+        if (angle > 180.0) angle = 360 - angle;
+        return angle;
+    }
+
+    processAngle(rawAngle) {
+        // 1. Suavizado (Promedio móvil de 7 frames)
+        this.angleBuffer.push(rawAngle);
+        if (this.angleBuffer.length > 7) this.angleBuffer.shift();
+        const avgAngle = this.angleBuffer.reduce((a, b) => a + b) / this.angleBuffer.length;
+
+        // 2. Máquina de estados (Detección de ciclo)
+        const indicator = document.getElementById('detection-indicator');
+
+        // Detección FLEXIÓN (Arriba)
+        if (avgAngle < 80 && this.pedalState === 'UP') {
+            this.pedalState = 'DOWN';
+            if (indicator) indicator.classList.add('active');
+        }
+
+        // Detección EXTENSIÓN (Abajo)
+        if (avgAngle > 140 && this.pedalState === 'DOWN') {
+            this.pedalState = 'UP';
+            this.countPedal();
+            if (indicator) indicator.classList.remove('active');
+        }
+    }
+
+    countPedal() {
+        const now = performance.now();
+        if (this.lastPedalTime > 0) {
+            const timeDiff = (now - this.lastPedalTime) / 1000; // Segundos
+            if (timeDiff > 0.3) { // Debounce mínimo para evitar ruido
+                this.rpm = 60 / timeDiff;
+                if (this.rpm > 140) this.rpm = 140; // Límite realista
+
+                // Inyección de energía proporcional a la fuerza del pedalazo (distancia recorrida en el ángulo)
+                this.inertia += 40;
+                this.power = this.inertia * 5; // Simulación de watts
+            }
+        }
+        this.lastPedalTime = now;
+        this.pedalCount++;
     }
 
     initNarrator() {
@@ -457,12 +516,24 @@ class SprintGame {
 
         this.npcPowers = this.npcPowers.map(p => Math.max(200, p + (Math.random() - 0.5) * 40));
 
-        if (this.power > 0) this.power -= 10;
-        if (this.power > this.maxPower) this.maxPower = this.power;
+        // --- SISTEMA DE FÍSICA E INERCIA ---
+        // Resistencia aerodinámica (más difícil a más velocidad)
+        const resistanceFactor = 0.002 * Math.pow(this.inertia, 2);
+        this.inertia -= (0.5 + resistanceFactor); // Fricción base + aire
+        if (this.inertia < 0) this.inertia = 0;
 
-        // Si hay potencia > 10W (movimiento mínimo), avanzamos la distancia
-        if (this.power > 10) {
-            const speed = (this.power / 10) + 15;
+        this.power = this.inertia * 8; // Escalamiento de Watts
+        if (this.power > 1800) this.power = 1800;
+
+        // Actualizar RPM (Decaimiento natural si no pedalea)
+        if (performance.now() - this.lastPedalTime > 2000) {
+            this.rpm *= 0.9;
+            if (this.rpm < 5) this.rpm = 0;
+        }
+
+        // Avance basado en inercia
+        if (this.inertia > 1) {
+            const speed = (this.inertia / 2) + 10;
             this.distance -= speed * 0.1;
         }
 
@@ -501,6 +572,9 @@ class SprintGame {
         const percent = (this.power / 1500) * 100;
         this.elements.powerFill.style.width = `${percent}%`;
         this.elements.powerText.innerText = `${Math.floor(this.power)}W`;
+
+        const rpmEl = document.getElementById('rpm');
+        if (rpmEl) rpmEl.innerText = Math.floor(this.rpm);
 
         this.positions.forEach((name, index) => {
             const el = document.getElementById(`rank-${index + 1}`);
