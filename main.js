@@ -49,7 +49,28 @@ class SprintGame {
             this.initNarrator();
         } catch (e) {
             console.error("⚠️ Error en componentes visuales/audio:", e);
+            this.showError("Error al inicializar 3D: " + e.message);
         }
+    }
+
+    showError(msg) {
+        let errorDiv = document.getElementById('debug-log');
+        if (!errorDiv) {
+            errorDiv = document.createElement('div');
+            errorDiv.id = 'debug-log';
+            errorDiv.style.position = 'absolute';
+            errorDiv.style.top = '10px';
+            errorDiv.style.left = '50%';
+            errorDiv.style.transform = 'translateX(-50%)';
+            errorDiv.style.background = 'rgba(255,0,0,0.8)';
+            errorDiv.style.color = 'white';
+            errorDiv.style.padding = '10px';
+            errorDiv.style.zIndex = '10000';
+            errorDiv.style.fontSize = '12px';
+            errorDiv.style.borderRadius = '5px';
+            document.body.appendChild(errorDiv);
+        }
+        errorDiv.innerText = msg;
     }
 
     initThree() {
@@ -69,12 +90,18 @@ class SprintGame {
         // Renderer
         try {
             console.log("🚀 Three.js: Creando WebGLRenderer...");
-            this.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+            this.renderer = new THREE.WebGLRenderer({
+                antialias: true,
+                alpha: false, // Quitar alpha para asegurar que el fondo del scene se vea
+                powerPreference: "high-performance"
+            });
+            this.renderer.setPixelRatio(window.devicePixelRatio);
             container.appendChild(this.renderer.domElement);
             this.updateRendererSize();
             console.log("✅ Three.js: Renderer acoplado al DOM.");
         } catch (err) {
             console.error("💥 Three.js: WebGL no disponible:", err);
+            this.showError("WebGL no disponible o error: " + err.message);
             return;
         }
 
