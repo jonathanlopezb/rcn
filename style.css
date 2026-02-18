@@ -67,12 +67,46 @@ html {
         gap: 40px;
     }
 
-    .hud-card {
-        min-width: 200px;
-    }
-
     .power-section {
         width: 40%;
+    }
+}
+
+/* --- OPTIMIZACIÓN PROYECCIÓN (SÚPER GRANDE) --- */
+@media (min-width: 1900px) {
+    .hud-card {
+        min-width: 350px;
+        padding: 20px 40px;
+    }
+
+    .hud-label {
+        font-size: 1.2rem;
+    }
+
+    .hud-value {
+        font-size: 5rem;
+    }
+
+    .rank-item {
+        font-size: 2.5rem;
+        padding: 20px 40px;
+    }
+
+    .broadcast-badge {
+        font-size: 1.5rem;
+        padding: 10px 30px;
+    }
+
+    .power-reading {
+        font-size: 6rem;
+    }
+
+    .power-badge {
+        font-size: 1.8rem;
+    }
+
+    .power-bar-wrapper {
+        height: 30px;
     }
 }
 

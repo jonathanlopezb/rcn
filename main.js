@@ -75,17 +75,15 @@ class SprintGame {
 
     initThree() {
         const container = this.elements.threeContainer;
-        if (!container) {
-            console.warn("Contenedor 3D no encontrado.");
-            return;
-        }
+        if (!container) return;
 
-        // Scene & Camera
         this.scene = new THREE.Scene();
-        this.scene.background = new THREE.Color(0x87ceeb); // Cielo azul
-        this.scene.fog = new THREE.Fog(0x87ceeb, 10, 100);
+        this.scene.background = new THREE.Color(0x87ceeb); // Cielo inicial
 
-        this.camera3D = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        // Fog para profundidad
+        this.scene.fog = new THREE.Fog(0x87ceeb, 20, 300);
+
+        this.camera3D = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 2000);
 
         // Renderer
         try {
@@ -117,13 +115,34 @@ class SprintGame {
         const grid = new THREE.GridHelper(200, 50, 0xff0000, 0x444444);
         this.scene.add(grid);
 
-        // Road
-        const roadGeo = new THREE.PlaneGeometry(20, 2000);
-        const roadMat = new THREE.MeshBasicMaterial({ color: 0x222222 });
+        // Road con líneas (Mejorado para WOW)
+        const roadGroup = new THREE.Group();
+        const roadGeo = new THREE.PlaneGeometry(25, 4000);
+        const roadMat = new THREE.MeshBasicMaterial({ color: 0x1a1a1a });
         this.road = new THREE.Mesh(roadGeo, roadMat);
         this.road.rotation.x = -Math.PI / 2;
-        this.road.position.z = -500;
-        this.scene.add(this.road);
+        this.road.position.z = -1000;
+        roadGroup.add(this.road);
+
+        // Líneas de carretera
+        for (let i = 0; i < 100; i++) {
+            const lineGeo = new THREE.PlaneGeometry(0.3, 10);
+            const lineMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
+            const line = new THREE.Mesh(lineGeo, lineMat);
+            line.rotation.x = -Math.PI / 2;
+            line.position.set(0, 0.05, -i * 40);
+            roadGroup.add(line);
+        }
+        this.scene.add(roadGroup);
+
+        // Skybox (Esfera gigante)
+        const skyGeo = new THREE.SphereGeometry(1000, 32, 32);
+        const skyMat = new THREE.MeshBasicMaterial({
+            color: 0x87ceeb,
+            side: THREE.BackSide
+        });
+        this.sky = new THREE.Mesh(skyGeo, skyMat);
+        this.scene.add(this.sky);
 
         // Ciclista
         this.cyclistGroup = new THREE.Group();
@@ -374,6 +393,17 @@ class SprintGame {
             withdrawBtn.addEventListener('click', () => {
                 this.speak("¡Te has retirado de la carrera!", true);
                 this.reset();
+            });
+        }
+
+        this.elements.fullscreenBtn = document.getElementById('fullscreen-btn');
+        if (this.elements.fullscreenBtn) {
+            this.elements.fullscreenBtn.addEventListener('click', () => {
+                if (!document.fullscreenElement) {
+                    document.documentElement.requestFullscreen();
+                } else {
+                    document.exitFullscreen();
+                }
             });
         }
 
