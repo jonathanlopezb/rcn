@@ -470,14 +470,20 @@ class SprintGame {
     }
 
     startCountdown() {
+        const nameInput = document.getElementById('player-name');
+        const errorMsg = document.getElementById('name-error');
+        this.playerName = nameInput ? nameInput.value.trim() : "";
+
+        if (!this.playerName) {
+            if (errorMsg) errorMsg.style.display = 'block';
+            this.speak("El nombre es obligatorio", true);
+            return;
+        }
+
+        if (errorMsg) errorMsg.style.display = 'none';
         this.gameState = 'COUNTDOWN';
 
         // Inicializar Audio y Pose solo después de interacción del usuario
-        if (!this.audioCtx) this.initAudio();
-        if (!this.pose) this.initPose();
-
-        const nameInput = document.getElementById('player-name');
-        this.playerName = nameInput ? nameInput.value : "Ciclista";
 
         this.elements.startOverlay.classList.remove('active');
         this.elements.countdownOverlay.classList.add('active');
