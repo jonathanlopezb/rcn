@@ -41,6 +41,34 @@ html {
     inset: 0;
     z-index: 1;
     background: transparent;
+    overflow: hidden;
+}
+
+.three-container canvas {
+    width: 100% !important;
+    height: 100% !important;
+    display: block;
+}
+
+/* --- RESPONSIVE DESKTOP --- */
+@media (min-width: 1024px) {
+    .hud-top {
+        flex-direction: row;
+        justify-content: space-between;
+        padding: 30px 60px;
+    }
+
+    .stats-group {
+        gap: 40px;
+    }
+
+    .hud-card {
+        min-width: 200px;
+    }
+
+    .power-section {
+        width: 40%;
+    }
 }
 
 /* Vibración de cámara */
@@ -262,7 +290,7 @@ html {
     width: 0%;
     background: linear-gradient(90deg, #00ff00, #ffff00, #ff0000);
     transition: width 0.1s ease-out;
-    box-shadow: 0 0 30px rgba(255, 255, 0, 0.6);
+    box-shadow: 0 0 30px rgba(255, 255, 0, 0.6), 0 0 50px rgba(255, 0, 0, 0.4);
     position: relative;
     overflow: hidden;
 }

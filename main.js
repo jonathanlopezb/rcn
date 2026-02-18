@@ -23,7 +23,7 @@ class SprintGame {
         this.timerInterval = null;
         this.npcPowers = [0, 0];
         this.positions = ['TÚ', 'NPC 1', 'NPC 2'];
-        this.playerName = "Jonathan";
+        this.playerName = "COloca tu nombre aqui";
 
         // MediaPipe Pose
         this.pose = null;
@@ -70,8 +70,8 @@ class SprintGame {
         try {
             console.log("🚀 Three.js: Creando WebGLRenderer...");
             this.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-            this.updateRendererSize();
             container.appendChild(this.renderer.domElement);
+            this.updateRendererSize();
             console.log("✅ Three.js: Renderer acoplado al DOM.");
         } catch (err) {
             console.error("💥 Three.js: WebGL no disponible:", err);
@@ -111,6 +111,32 @@ class SprintGame {
         this.cyclistGroup.add(rider);
 
         this.scene.add(this.cyclistGroup);
+
+        // Montañas (Parallax)
+        this.mountains = new THREE.Group();
+        for (let i = 0; i < 20; i++) {
+            const mGeo = new THREE.ConeGeometry(5 + Math.random() * 10, 10 + Math.random() * 20, 4);
+            const mMat = new THREE.MeshBasicMaterial({ color: 0x3d2b1f });
+            const mesh = new THREE.Mesh(mGeo, mMat);
+            mesh.position.set(
+                (Math.random() - 0.5) * 200,
+                0,
+                -Math.random() * 2000
+            );
+            this.mountains.add(mesh);
+        }
+        this.scene.add(this.mountains);
+
+        // NPCs
+        this.npcMeshes = [];
+        for (let i = 0; i < 2; i++) {
+            const npc = new THREE.Group();
+            const nBike = new THREE.Mesh(bikeGeo, new THREE.MeshBasicMaterial({ color: 0x0033a0 }));
+            npc.add(nBike);
+            npc.position.set(i === 0 ? -2 : 2, 0, -5);
+            this.npcMeshes.push(npc);
+            this.scene.add(npc);
+        }
 
         // Camera setup
         this.camera3D.position.set(0, 3, 8);
@@ -372,15 +398,16 @@ class SprintGame {
     update() {
         this.time += 0.1;
 
-        const jitter = (Math.random() - 0.5) * 20;
-        this.power = Math.max(0, this.power + jitter);
-        this.npcPowers = this.npcPowers.map(p => Math.max(200, p + (Math.random() - 0.5) * 50));
+        this.npcPowers = this.npcPowers.map(p => Math.max(200, p + (Math.random() - 0.5) * 40));
 
-        if (this.power > 0) this.power -= 8;
+        if (this.power > 0) this.power -= 10;
         if (this.power > this.maxPower) this.maxPower = this.power;
 
-        const speed = (this.power / 12) + 15;
-        this.distance -= speed * 0.1;
+        // Si hay potencia > 10W (movimiento mínimo), avanzamos la distancia
+        if (this.power > 10) {
+            const speed = (this.power / 10) + 15;
+            this.distance -= speed * 0.1;
+        }
 
         if (this.distance < 300) this.increaseCrowdVolume(0.15);
 
