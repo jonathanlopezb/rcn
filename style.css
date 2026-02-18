@@ -178,6 +178,17 @@ html {
     align-items: center;
 }
 
+.logo-rcn-container {
+    height: 60px;
+    display: flex;
+    align-items: center;
+}
+
+.rcn-logo-hud {
+    height: 100%;
+    filter: drop-shadow(0 0 10px rgba(227, 6, 19, 0.4));
+}
+
 .logo-transelo {
     font-size: 0.65rem;
     font-weight: 700;
