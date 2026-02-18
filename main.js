@@ -484,6 +484,8 @@ class SprintGame {
         this.gameState = 'COUNTDOWN';
 
         // Inicializar Audio y Pose solo después de interacción del usuario
+        if (!this.audioCtx) this.initAudio();
+        if (!this.pose) this.initPose();
 
         this.elements.startOverlay.classList.remove('active');
         this.elements.countdownOverlay.classList.add('active');
